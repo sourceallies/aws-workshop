@@ -86,6 +86,7 @@ For more details, refer to the [AWS CLI S3 rb documentation](https://docs.aws.am
 1. Create a CloudFormation template file named `template.yaml` with the following content:
     ```yaml
     AWSTemplateFormatVersion: '2010-09-09'
+    
     Resources:
       Bucket:
         Type: 'AWS::S3::Bucket'
@@ -118,6 +119,7 @@ For more details, refer to the [AWS CLI CloudFormation delete-stack documentatio
 
 ### Additional Resources
 - [AWS CloudFormation Documentation](https://docs.aws.amazon.com/cloudformation/index.html)
+- [AWS Cloudformation S3 Bucket Resource Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html)
 - [AWS CLI CloudFormation Commands](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/index.html)
 
 ## Use SAM CLI Instead of Cloudformation Service with AWS CLI
@@ -134,4 +136,45 @@ You will be prompted to enter information in a step-by-step way:
 
 SAM CLI will deploy your template with the stack name you provided, and it will create a config file name samconfig.toml which saves your config provided during the `--guided` process. For subsequent deployments (after making additional changes to the cloudformation template), you should run `sam deploy` without the `--guided` option: SAM CLI will using the config in the samconfig.toml file.
 
+### Additional Resources
+- [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-command-reference.html)
 
+## Deploy a Lambda Function Using the SAM CLI
+
+Deploying lambdas can be tricky because you need to package your lambda code, upload it to an S3 bucket, deploy your lambda with a reference to the lambda package, and update the lambda version. While that exercise is educational, we will skip to the easier version, using SAM's special cloudformation type `aws::serverless::function`.
+
+Update your cloudformation template (template.yaml file) with the following. Notice the serverless transform at the top of the template. Notice the type of the function resource; it's "service" is `serverless`.
+
+```yaml
+    AWSTemplateFormatVersion: '2010-09-09'
+    Transform: 'AWS::Serverless-2016-10-31'
+
+    Resources:
+        Bucket:
+            Type: 'AWS::S3::Bucket'
+
+        HelloWorldFunction:
+            Type: 'AWS::Serverless::Function'
+            Properties:
+                Handler: 'app.handler'
+                Runtime: 'python3.12'
+                CodeUri: './'
+```
+
+Create a python file name `app.py` in the same directory as the cloudformation template with the following handler method:
+
+```python
+    def handler(event, context):
+        print("Hello, World.")
+        return "Hello, World."
+```
+
+Deploy your lambda function by running `sam deploy`. SAM CLI will do the rest!
+
+## Modify the Lambda Function to Read from S3
+
+If we have time, we'll update our lambda function code to get an object (file) from S3 and read the content of the file. While this sounds simple enough, it opens up two important concepts:
+    1. building lambda code before deployment
+    1. IAM permissions
+
+Introducing these concepts can be challenging if you haven't encountered them before.
