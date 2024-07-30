@@ -79,4 +79,59 @@ For more details, refer to the [AWS CLI S3 rb documentation](https://docs.aws.am
 - [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/)
 - [AWS CLI S3 Commands](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
 
+## Working with CloudFormation to Create an S3 Bucket
+
+### Creating a CloudFormation Template
+
+1. Create a CloudFormation template file named `template.yaml` with the following content:
+    ```yaml
+    AWSTemplateFormatVersion: '2010-09-09'
+    Resources:
+      Bucket:
+        Type: 'AWS::S3::Bucket'
+    ```
+
+### Deploying the CloudFormation Template
+
+1. Run the following command to deploy the CloudFormation stack, replacing `your-stack-name` with a unique name for your stack and ensuring the `--template-file` path points to your `template.yaml` file:
+    ```bash
+    aws cloudformation deploy --stack-name your-stack-name --template-file template.yaml --capabilities CAPABILITY_NAMED_IAM
+    ```
+1. Wait for the stack creation to complete. You can monitor the progress in the AWS web console under the cloudformation service. Or, using the following command:
+    ```bash
+    aws cloudformation describe-stacks --stack-name your-stack-name
+    ```
+    The stack status should eventually change to `CREATE_COMPLETE`.
+
+For more details, refer to the [AWS CLI CloudFormation deploy documentation](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/deploy/index.html).
+
+### Deleting the CloudFormation Stack
+To delete the CloudFormation stack and the associated S3 bucket, follow these steps:
+
+1. Run the following command, replacing `your-stack-name` with the name of your stack:
+    ```bash
+    aws cloudformation delete-stack --stack-name your-stack-name
+    ```
+2. Verify that the stack was deleted in the AWS web console.
+
+For more details, refer to the [AWS CLI CloudFormation delete-stack documentation](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/delete-stack.html).
+
+### Additional Resources
+- [AWS CloudFormation Documentation](https://docs.aws.amazon.com/cloudformation/index.html)
+- [AWS CLI CloudFormation Commands](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/index.html)
+
+## Use SAM CLI Instead of Cloudformation Service with AWS CLI
+
+SAM CLI provides several features making deployments from cli much easier than using aws cli directly.
+
+Run the following to deploy your cloudformation template using sam cli:
+```bash
+    sam deploy --guided
+```
+You will be prompted to enter information in a step-by-step way:
+- Provide a stack name of your choice:
+- All other options can be the defaults. Just hit enter to use the default.
+
+SAM CLI will deploy your template with the stack name you provided, and it will create a config file name samconfig.toml which saves your config provided during the `--guided` process. For subsequent deployments (after making additional changes to the cloudformation template), you should run `sam deploy` without the `--guided` option: SAM CLI will using the config in the samconfig.toml file.
+
 
