@@ -1,5 +1,5 @@
 # AWS Workshop
-Welcome to the AWS Workshop! By the end of this workshop, you will have a basic understanding of key AWS services and how to use them to deploy them using infrastructure as code.
+Welcome to the AWS Workshop! By the end of this workshop, you will have a basic understanding of key AWS services and how to deploy a few resources using infrastructure as code.
 
 ## Workshop Goals
 - Understand the basics of AWS and its key services.
@@ -174,7 +174,7 @@ Deploy your lambda function by running `sam deploy`. SAM CLI will do the rest!
 ## Modify the Lambda Function to Read from S3
 
 If we have time, we'll update our lambda function code to get an object (file) from S3 and read the content of the file. While this sounds simple enough, it opens up two important concepts:
-    1. building lambda code before deployment
-    1. IAM permissions
+1. building lambda code before deployment
+1. IAM permissions
 
 Introducing these concepts can be challenging if you haven't encountered them before.
